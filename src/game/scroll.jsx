@@ -1,6 +1,6 @@
 import { gameManager } from "./core";
 import { cachedAssets } from "./paint";
-import { createTile } from "./tile";
+import { createBrokenTile, createTile } from "./tile";
 
 
 const canvas = document.getElementById("game")
@@ -60,14 +60,15 @@ export function generateNewPlatforms() {
         const newY =
             highestY - Math.random() * (verticalGapRange[1] - verticalGapRange[0]) -
             verticalGapRange[0];
-            console.log(gameManager.gameObjects);
             
 
         // Randomize x position but ensure it's fully within canvas bounds
         const newX = Math.random() * (canvasWidth - 50); // Assuming 50 is the tile width
 
         const newTile = createTile(newX, newY);
+        const newBrokenTile = createBrokenTile(newX , newY)
         gameManager.gameObjects.push(newTile);
+        gameManager.gameObjects.push(newBrokenTile)
     }
 }
 

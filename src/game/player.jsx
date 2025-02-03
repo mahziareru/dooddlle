@@ -22,8 +22,6 @@ export function createPlayer(x = 0 , y = 0){
         
         onCollisionEnter(obj) {
             if (obj.name === "tile") this.speedY = -10
-            console.log(obj);
-            
           },
 
         start(){
