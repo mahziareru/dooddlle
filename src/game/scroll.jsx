@@ -1,6 +1,6 @@
 import { gameManager } from "./core";
 import { cachedAssets } from "./paint";
-import { createBrokenTile, createTile } from "./tile";
+import { createBrokenTile, createMovingTile, createTile } from "./tile";
 
 
 const canvas = document.getElementById("game")
@@ -8,7 +8,7 @@ const canvas = document.getElementById("game")
 
 export function updateGameWorld() {
     const canvas = document.getElementById("game")
-    const scrollThreshold = (canvas.height / 4) + 90 ;
+    const scrollThreshold = (canvas.height / 4) + 10 ;
     const player = gameManager.gameObjects.find(item => item.name === "player")
     
     
@@ -34,43 +34,56 @@ export function updateGameWorld() {
 export function generateNewPlatforms() {
     const canvasHeight = canvas.height;
     const canvasWidth = canvas.width;
+    const platformWidth = 59;
+    const platformHight = 16;
+    const requiredPlatformCount = 20;
+    const minGap = 40;
+    const maxGap = 70;
 
-    // Remove platforms that are off-screen
+
     gameManager.gameObjects = gameManager.gameObjects.filter(
         (obj) => obj.transform.position[1] < canvasHeight
     );
+  
+  
+  
+  
+    let existingPlatform = gameManager.gameObjects.filter((obj)=> [
+      "tile" , "movingTile"].includes(obj.name));
+    
+      if (existingPlatform.length === 0 ) {
 
-    const requiredPlatformCount = 27; // Minimum number of platforms
-    const verticalGapRange = [80, 120]; // Gap range between tiles
-
-    // Get the highest platform's Y position
-    const highestY = Math.min(
-        ...gameManager.gameObjects
-            .filter((obj) => obj.name === "tile")
-            .map((obj) => obj.transform.position[1]),
-        canvasHeight
-    );
-
-    // Add new platforms
-    while (
-        gameManager.gameObjects.filter((obj) => obj.name === "tile").length <
-        requiredPlatformCount
-    ) {
-        // Calculate the y position for the new tile
-        const newY =
-            highestY - Math.random() * (verticalGapRange[1] - verticalGapRange[0]) -
-            verticalGapRange[0];
-            
-
-        // Randomize x position but ensure it's fully within canvas bounds
-        const newX = Math.random() * (canvasWidth - 50); // Assuming 50 is the tile width
-
-        const newTile = createTile(newX, newY);
-        const newBrokenTile = createBrokenTile(newX , newY)
-        gameManager.gameObjects.push(newTile);
-        gameManager.gameObjects.push(newBrokenTile)
-    }
-}
+        let startY = canvasHeight - 50
+        for(let i = 0  ; i < requiredPlatformCount ; i++ ){
+          let x  = Math.random() * (canvasWidth - platformWidth)
+          let y  = Math.random() * (canvasHeight - platformHight)
+  
+          gameManager.gameObjects.push(createTile(x,y));
+        }
+        return;
+      }
+  
+const highestY = Math.min(...existingPlatform.map(obj => obj.transform.position[1]), canvasHeight);
+while (existingPlatform.length < requiredPlatformCount) {
+    console.log(gameManager.gameObjects);
+    
+  
+    // Calculate the y position for the new tile
+    const gap = minGap + Math.random() * (maxGap - minGap);
+    const newY = highestY - gap;
+    console.log(newY);
+    
+        
+  
+    // Randomize x position but ensure it's fully within canvas bounds
+    const newX = Math.random() * (canvasWidth - 50); // Assuming 50 is the tile width
+  
+    const newTile = createMovingTile(newX, newY);
+    gameManager.gameObjects.push(newTile);
+    existingPlatform.push(newTile);
+  }
+  }
+  
 
 
 export function handleOverFlow(){

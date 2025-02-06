@@ -7,6 +7,7 @@ export const GameObject = {
     rotation: [0, 0],
     width: 0,
     height: 0,
+    velocity : 0
   },
   image: null,
   hasColligionTrigger: false,
@@ -63,25 +64,32 @@ export const gameManager = {
   },
 
   checkCollision(obj1, obj2, bufferX = 10, bufferY = 0) { 
+    if (!obj1.velocity) obj1.velocity = { x: 0, y: 0 }; // ✅ Prevent undefined velocity
+
     const rect1 = {
-      x: obj1.transform.position[0] + bufferX,
-      y: obj1.transform.position[1] + bufferY,
-      width: obj1.transform.width - 2 * bufferX,
-      height: obj1.transform.height - 2 * bufferY,
+        x: obj1.transform.position[0] + bufferX,
+        y: obj1.transform.position[1] + bufferY,
+        width: obj1.transform.width - 2 * bufferX,
+        height: obj1.transform.height - 2 * bufferY,
     };
 
     const rect2 = {
-      x: obj2.transform.position[0] + bufferX,
-      y: obj2.transform.position[1] + bufferY,
-      width: obj2.transform.width - 2 * bufferX,
-      height: obj2.transform.height - 2 * bufferY,
+        x: obj2.transform.position[0] + bufferX,
+        y: obj2.transform.position[1] + bufferY,
+        width: obj2.transform.width - 2 * bufferX,
+        height: obj2.transform.height - 2 * bufferY,
     };
 
-    return (
-      rect1.x < rect2.x + rect2.width &&
-      rect1.x + rect1.width > rect2.x &&
-      rect1.y < rect2.y + rect2.height &&
-      rect1.y + rect1.height > rect2.y
-    );
-  },
+    const isTouching =
+        rect1.x < rect2.x + rect2.width &&
+        rect1.x + rect1.width > rect2.x &&
+        rect1.y + rect1.height > rect2.y &&
+        rect1.y < rect2.y + rect2.height;
+
+    const isFalling = obj1.velocity.y > 0;  // ✅ Now using velocity.y
+    const wasAbove = rect1.y + rect1.height - obj1.velocity.y < rect2.y + 5;  
+
+    return isTouching && isFalling && wasAbove;
+}
+
 };

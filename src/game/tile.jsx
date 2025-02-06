@@ -1,5 +1,6 @@
 import { gameManager, GameObject } from "./core";
 import { cachedAssets } from "./paint";
+const canvas1 = document.getElementById("game")
 
 export function createTile(x= 0 , y = 0){
     return {
@@ -61,6 +62,46 @@ export function createBrokenTile(x=0 , y=0){
         }
 
         
+
+    }
+}
+
+
+export function createMovingTile(x=0 , y=0){
+    let speed = 1
+    return{
+        ...GameObject,
+        name:"movingTile",
+        hasCollisionTrigger: true,
+        image:cachedAssets.movingTile,
+        pos:"right",
+        velocity:{ x: 0 , y: 0},
+        transform: {
+            position: [x , y] , rotation: [0 , 0]
+        },
+        
+        update(ctx , canvas){
+            
+            if(this.transform.position[0] > canvas1.width){
+                this.pos = "left"
+            }else if (this.transform.position[0] < 1  && this.transform.position[0] < canvas1.width ){
+                this.pos = "right"
+            }
+            
+            console.log(this.transform.position[0]);
+            
+            
+            if(this.pos === "right"){
+                this.transform.position[0] += speed
+                
+            }
+            if(this.pos === "left"){
+                this.transform.position[0] -= speed
+                
+                
+              }
+
+        }
 
     }
 }

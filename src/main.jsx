@@ -43,10 +43,7 @@ await cacheAssets()
 
 
 
-gameManager.gameObjects.push(createTile(100,300))
-gameManager.gameObjects.push(createTile(160,500))
-gameManager.gameObjects.push(createTile(160,200))
-gameManager.gameObjects.push(createTile(50,50))
+
 gameManager.gameObjects.push(createPlayer())
 
 

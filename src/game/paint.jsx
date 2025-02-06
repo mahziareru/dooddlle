@@ -10,7 +10,8 @@ export const assetToCache = {
     broken_tile_1 :"/Assets/Images/Game_tiles/cropped/brown_1.png",
     broken_tile_2 :"/Assets/Images/Game_tiles/cropped/brown_2.png",
     broken_tile_3 :"/Assets/Images/Game_tiles/cropped/brown_3.png",
-    broken_tile_4 :"/Assets/Images/Game_tiles/cropped/brown_4.png"
+    broken_tile_4 :"/Assets/Images/Game_tiles/cropped/brown_4.png",
+    movingTile : "/Assets/Images/Game_tiles/cropped/moving_tile.png"
 }
 
 
