@@ -12,19 +12,17 @@ export function updateGameWorld() {
     const player = gameManager.gameObjects.find(item => item.name === "player")
     
     
-    // Check if player is above the scroll threshold
     if (player.transform.position[1] < scrollThreshold) {
         const scrollSpeed = scrollThreshold - player.transform.position[1];
 
-        // Move player to the scroll threshold
+     
         player.transform.position[1] = scrollThreshold;
 
-        // Scroll all platforms, enemies, and background elements down
+       
         gameManager.gameObjects.forEach((obj) => {
-            obj.transform.position[1] += scrollSpeed; // Move objects downward
+            obj.transform.position[1] += scrollSpeed; 
         });
 
-        // Optionally, generate new platforms if needed
         generateNewPlatforms()
         
     }
@@ -39,7 +37,8 @@ export function generateNewPlatforms() {
     const requiredPlatformCount = 20;
     const minGap = 40;
     const maxGap = 70;
-
+    const breakingTileChance = 0.3
+    const movingTileChance = 0.2
 
     gameManager.gameObjects = gameManager.gameObjects.filter(
         (obj) => obj.transform.position[1] < canvasHeight
@@ -49,36 +48,56 @@ export function generateNewPlatforms() {
   
   
     let existingPlatform = gameManager.gameObjects.filter((obj)=> [
-      "tile" , "movingTile"].includes(obj.name));
+      "tile" , "movingTile" , "brokenTile"].includes(obj.name));
     
       if (existingPlatform.length === 0 ) {
 
-        let startY = canvasHeight - 50
+        gameManager.gameObjects.push(createTile(100,500));
+        console.log(gameManager.gameObjects);
+        
         for(let i = 0  ; i < requiredPlatformCount ; i++ ){
           let x  = Math.random() * (canvasWidth - platformWidth)
           let y  = Math.random() * (canvasHeight - platformHight)
   
           gameManager.gameObjects.push(createTile(x,y));
-        }
+        }   
         return;
       }
   
 const highestY = Math.min(...existingPlatform.map(obj => obj.transform.position[1]), canvasHeight);
 while (existingPlatform.length < requiredPlatformCount) {
     console.log(gameManager.gameObjects);
-    
-  
-    // Calculate the y position for the new tile
+    let validPosition = false;
+    let newX , newY;
     const gap = minGap + Math.random() * (maxGap - minGap);
-    const newY = highestY - gap;
-    console.log(newY);
+
+    for(let i = 0 ; i < requiredPlatformCount ; i++){
+        newY = highestY - gap;
+        newX = Math.random() * (canvasWidth - platformWidth);
+
+        const overlaps = existingPlatform.some(platform =>
+            Math.abs(newX - platform.transform.position[0]) < platformWidth * 0.8 &&
+            Math.abs(newY - platform.transform.position[1]) < minGap * 0.8
+        );
+
+        if (!overlaps) {
+            validPosition = true;
+            break;
+        }
+    }
+    if (!validPosition) continue;
+
     
         
-  
-    // Randomize x position but ensure it's fully within canvas bounds
-    const newX = Math.random() * (canvasWidth - 50); // Assuming 50 is the tile width
-  
-    const newTile = createMovingTile(newX, newY);
+    
+    let newTile;
+    if(Math.random() < movingTileChance){
+        newTile = createMovingTile(newX , newY)
+    }else if(Math.random() < breakingTileChance){
+        newTile = createBrokenTile(newX,newY)
+    }else {
+        newTile = createTile(newX , newY)
+    }
     gameManager.gameObjects.push(newTile);
     existingPlatform.push(newTile);
   }

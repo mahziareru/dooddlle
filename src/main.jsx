@@ -30,6 +30,7 @@ async function cacheAssets() {
 
 
 function drawBackground() {
+  if (!gameManager || !gameManager.gameObjects.length) return;
   const player = gameManager.gameObjects.find(item => item.name === "player")
   if (player.transform.position[1] > canvas.height){
     gameManager.gameObjects = []
@@ -44,7 +45,7 @@ await cacheAssets()
 
 
 
-gameManager.gameObjects.push(createPlayer())
+gameManager.gameObjects.push(createPlayer(40,50))
 
 
 

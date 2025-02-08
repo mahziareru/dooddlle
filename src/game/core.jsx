@@ -45,6 +45,9 @@ export const gameManager = {
           if (this.checkCollision(gameObject, go)) {
             if (typeof gameObject.onCollisionEnter === "function") {
               gameObject.onCollisionEnter(go);
+          }
+            if (typeof go.onCollisionEnter === "function") {
+              go.onCollisionEnter(gameObject);
             }
           }
         });
@@ -64,20 +67,20 @@ export const gameManager = {
   },
 
   checkCollision(obj1, obj2, bufferX = 10, bufferY = 0) { 
-    if (!obj1.velocity) obj1.velocity = { x: 0, y: 0 }; // ✅ Prevent undefined velocity
+    if (!obj1.velocity) obj1.velocity = { x: 0, y: 0 };
 
     const rect1 = {
         x: obj1.transform.position[0] + bufferX,
-        y: obj1.transform.position[1] + bufferY,
+        y: obj1.transform.position[1], 
         width: obj1.transform.width - 2 * bufferX,
-        height: obj1.transform.height - 2 * bufferY,
+        height: obj1.transform.height
     };
 
     const rect2 = {
-        x: obj2.transform.position[0] + bufferX,
-        y: obj2.transform.position[1] + bufferY,
-        width: obj2.transform.width - 2 * bufferX,
-        height: obj2.transform.height - 2 * bufferY,
+        x: obj2.transform.position[0], 
+        y: obj2.transform.position[1],
+        width: obj2.transform.width,
+        height: obj2.transform.height
     };
 
     const isTouching =
@@ -86,8 +89,8 @@ export const gameManager = {
         rect1.y + rect1.height > rect2.y &&
         rect1.y < rect2.y + rect2.height;
 
-    const isFalling = obj1.velocity.y > 0;  // ✅ Now using velocity.y
-    const wasAbove = rect1.y + rect1.height - obj1.velocity.y < rect2.y + 5;  
+    const isFalling = obj1.velocity.y > 0; 
+    const wasAbove = rect1.y + rect1.height - obj1.velocity.y <= rect2.y;  
 
     return isTouching && isFalling && wasAbove;
 }

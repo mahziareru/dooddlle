@@ -20,7 +20,8 @@ export function createPlayer(x = 0 , y = 0){
         movingKey: "",
         
         onCollisionEnter(obj) {
-            if (obj.name === "tile" || "movingTile") this.velocity.y = -10
+            if (obj.name === "tile" || obj.name === "movingTile" || obj.name === "brokenTile") this.velocity.y = -10
+           
           },
 
         start(){
